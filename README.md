@@ -8,15 +8,24 @@ you were looking at when you wrote it. Summon it again in the same place and you
 note is already there. ~1100 lines of Swift, no third-party dependencies, no Xcode
 required.
 
-![](design/board-light.png)
+## 截图
 
-<table>
-<tr>
-<td><img src="design/note-panel.png" width="380"></td>
-<td><img src="design/board-dark.png" width="380"></td>
-</tr>
-<tr><td align="center">按 ⌥⌘N 呼出 · Liquid Glass 面板</td><td align="center">深色模式</td></tr>
-</table>
+| 便签面板 · 浅色 | 便签面板 · 深色 |
+|---|---|
+| ![](design/note-panel-light.png) | ![](design/note-panel-dark.png) |
+
+| 总面板 · 浅色 | 总面板 · 深色 |
+|---|---|
+| ![](design/board-light.png) | ![](design/board-dark.png) |
+
+面板是系统级的 Liquid Glass 材质，浅色深色各自成立，背后的内容会透过玻璃被模糊。
+
+## 图标
+
+![](design/icons.png)
+
+从左到右：默认（浅色）· 深色 · 透明（浅色）· 透明（深色）。
+跟随系统设置里的「图标与小组件样式」自动切换，不需要手动选。
 
 ## 快速开始
 
@@ -60,7 +69,7 @@ cd ContextNotes
 
 呼出就是一块 Liquid Glass，没有地址栏、不显示位置——你写的就是"这个位置的那张便签"。
 
-![](design/note-panel.png)
+![](design/note-panel-light.png)
 
 用的是 macOS 26 起的系统材质 `NSGlassEffectView`，不是自己画的假玻璃：
 
