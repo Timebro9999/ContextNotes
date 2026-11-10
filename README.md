@@ -58,20 +58,21 @@ cd ContextNotes
 
 ## 界面
 
-呼出后就是一张纸，没有标题栏、没有地址、不显示位置——你写的就是"这个位置的那张便签"。
+呼出就是一块 Liquid Glass，没有地址栏、不显示位置——你写的就是"这个位置的那张便签"。
 
-![黄色便签](design/note-yellow.png)
+![](design/note-panel.png)
 
-左下角一排圆点是七种纸色（柠檬黄 / 蜜桃橙 / 樱花粉 / 薄荷绿 / 天空蓝 / 薰衣草 / 素白）。
-点一下立刻换色并落盘；新建便签时沿用上一次用过的颜色。
+用的是 macOS 26 起的系统材质 `NSGlassEffectView`，不是自己画的假玻璃：
 
-![天空蓝便签](design/note-sky.png)
+```swift
+glass.style = (.clear / .regular)              // 风格
+glass.cornerRadius = 0...28                    // 圆角
+glass.tintColor = .white.withAlphaComponent(t) // 浓度
+```
 
-纸面是代码画的：上浅下深的渐变、顶部一条受光高光、极细的纸边描线。
-窗口阴影交给系统按 alpha 形状生成，所以整张纸是透明的、无边框的。
+底部四个按钮：外观 / 复制全文 / 所有便签 / 删除。
 
-实现要点：`PaperView` 是 flipped 坐标系；调色底条用 `PaletteBar.draw` 而不是
-`layer.backgroundColor`，因为离屏渲染时 layer 背景可能不参与绘制。
+（早期版本做过"仿真便签纸"风格，已废弃——见 git 历史。）
 
 ### 数据结构的变化
 
