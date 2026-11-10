@@ -290,6 +290,11 @@ swift tools/make-appicon.swift   # 一次生成深浅两套 + 运行时大图
 
 ---
 
+## 分发与上架
+
+见 [docs/DISTRIBUTION.md](docs/DISTRIBUTION.md)：GitHub Releases（推荐，需 Developer ID + 公证）
+与 Mac App Store（需沙盒，本项目的辅助功能依赖是主要障碍）的完整分析。
+
 ## 已知限制
 
 1. **必须显式指定部署目标，否则系统直接拒绝这个 app**（踩过的坑，已修复）。
