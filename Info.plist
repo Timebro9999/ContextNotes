@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>CFBundleExecutable</key>
+	<string>ContextNotes</string>
+	<key>CFBundleIdentifier</key>
+	<string>com.aabananaaa.contextnotes</string>
+	<key>CFBundleName</key>
+	<string>ContextNotes</string>
+	<key>CFBundleDisplayName</key>
+	<string>语境便签</string>
+	<key>CFBundlePackageType</key>
+	<string>APPL</string>
+	<key>CFBundleShortVersionString</key>
+	<string>0.1.0</string>
+	<key>CFBundleVersion</key>
+	<string>1</string>
+	<key>LSMinimumSystemVersion</key>
+	<string>13.0</string>
+	<key>LSUIElement</key>
+	<false/>
+	<key>CFBundleIconFile</key>
+	<string>AppIcon</string>
+	<key>NSHighResolutionCapable</key>
+	<true/>
+	<key>NSPrincipalClass</key>
+	<string>NSApplication</string>
+	<key>NSAppleEventsUsageDescription</key>
+	<string>读取浏览器当前标签页地址，用来把便签归到具体网页上。</string>
+	<key>NSAccessibilityUsageDescription</key>
+	<string>读取前台应用与窗口信息，用来把便签归到具体文档或窗口上。</string>
+</dict>
+</plist>

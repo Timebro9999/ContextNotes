@@ -1,0 +1,20 @@
+# 构建产物
+ContextNotes.app/
+*.app/
+ContextNotes.adhoc-backup.tar.gz
+
+# 签名材料（私钥！）
+signing/
+*.key
+*.p12
+*.cer
+*.crt
+
+# 由 tools/make-appicon.swift 生成
+Assets/*.iconset/
+Assets/*.png
+Assets/*.icns
+
+# 系统垃圾
+.DS_Store
+*.swp
