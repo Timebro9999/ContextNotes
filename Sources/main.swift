@@ -32,6 +32,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         }
 
         applyTheme(AppearanceStore.shared.value.theme)
+        setupMainMenu()
 
         // 图标跟随明暗（icns 不支持外观变体，只能在运行时替换 Dock 图标）
         appearanceObservation = NSApp.observe(\.effectiveAppearance, options: [.new]) { [weak self] _, _ in
@@ -69,6 +70,86 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
 
     func applicationWillTerminate(_ notification: Notification) {
         if let ref = hotKeyRef { UnregisterEventHotKey(ref) }
+    }
+
+    // MARK: - 主菜单
+
+    /// 必须有主菜单。⌘C / ⌘V / ⌘A / ⌘Z 这类编辑快捷键在 AppKit 里是
+    /// **菜单快捷键**：由 NSMenu 匹配后沿响应链发送对应的 selector。
+    /// 没有对应菜单项，键等值就不会被消费，NSTextView 的 copy: 永远收不到，
+    /// 表现就是"在输入框里按 ⌘C 没反应"。
+    private func setupMainMenu() {
+        let mainMenu = NSMenu()
+
+        // 应用菜单
+        let appItem = NSMenuItem(title: "语境便签", action: nil, keyEquivalent: "")
+        let appMenu = NSMenu()
+        appMenu.addItem(withTitle: "关于语境便签",
+                        action: #selector(NSApplication.orderFrontStandardAboutPanel(_:)),
+                        keyEquivalent: "")
+        appMenu.addItem(.separator())
+        appMenu.addItem(withTitle: "隐藏语境便签",
+                        action: #selector(NSApplication.hide(_:)), keyEquivalent: "h")
+        let hideOthers = appMenu.addItem(withTitle: "隐藏其他",
+                                         action: #selector(NSApplication.hideOtherApplications(_:)),
+                                         keyEquivalent: "h")
+        hideOthers.keyEquivalentModifierMask = [.command, .option]
+        appMenu.addItem(withTitle: "显示全部",
+                        action: #selector(NSApplication.unhideAllApplications(_:)),
+                        keyEquivalent: "")
+        appMenu.addItem(.separator())
+        appMenu.addItem(withTitle: "退出语境便签",
+                        action: #selector(NSApplication.terminate(_:)), keyEquivalent: "q")
+        appItem.submenu = appMenu
+        mainMenu.addItem(appItem)
+
+        // 编辑菜单 —— 关键
+        let editItem = NSMenuItem(title: "编辑", action: nil, keyEquivalent: "")
+        let editMenu = NSMenu(title: "编辑")
+        editMenu.addItem(withTitle: "撤销",
+                         action: NSSelectorFromString("undo:"), keyEquivalent: "z")
+        let redo = editMenu.addItem(withTitle: "重做",
+                                    action: NSSelectorFromString("redo:"), keyEquivalent: "z")
+        redo.keyEquivalentModifierMask = [.command, .shift]
+        editMenu.addItem(.separator())
+        editMenu.addItem(withTitle: "剪切", action: #selector(NSText.cut(_:)), keyEquivalent: "x")
+        editMenu.addItem(withTitle: "拷贝", action: #selector(NSText.copy(_:)), keyEquivalent: "c")
+        editMenu.addItem(withTitle: "粘贴", action: #selector(NSText.paste(_:)), keyEquivalent: "v")
+        editMenu.addItem(withTitle: "全选", action: #selector(NSText.selectAll(_:)), keyEquivalent: "a")
+        editItem.submenu = editMenu
+        mainMenu.addItem(editItem)
+
+        // 便签菜单
+        let noteItem = NSMenuItem(title: "便签", action: nil, keyEquivalent: "")
+        let noteMenu = NSMenu(title: "便签")
+        noteMenu.addItem(item("呼出便签", #selector(showPanel), "n", [.command, .option]))
+        noteMenu.addItem(item("所有便签", #selector(showAllNotes), "n", [.command, .option, .shift]))
+        noteMenu.addItem(.separator())
+        noteMenu.addItem(item("复制当前便签全文", #selector(copyCurrentNote), "c", [.command, .shift]))
+        noteItem.submenu = noteMenu
+        mainMenu.addItem(noteItem)
+
+        // 窗口菜单
+        let windowItem = NSMenuItem(title: "窗口", action: nil, keyEquivalent: "")
+        let windowMenu = NSMenu(title: "窗口")
+        windowMenu.addItem(withTitle: "最小化",
+                           action: #selector(NSWindow.performMiniaturize(_:)), keyEquivalent: "m")
+        windowMenu.addItem(withTitle: "关闭",
+                           action: #selector(NSWindow.performClose(_:)), keyEquivalent: "w")
+        windowItem.submenu = windowMenu
+        mainMenu.addItem(windowItem)
+
+        NSApp.mainMenu = mainMenu
+        NSApp.windowsMenu = windowMenu
+    }
+
+    /// 带快捷键的菜单项
+    private func item(_ title: String, _ action: Selector,
+                      _ key: String, _ modifiers: NSEvent.ModifierFlags) -> NSMenuItem {
+        let menuItem = NSMenuItem(title: title, action: action, keyEquivalent: key)
+        menuItem.keyEquivalentModifierMask = modifiers
+        menuItem.target = self
+        return menuItem
     }
 
     // MARK: - 状态栏
@@ -305,6 +386,11 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         // 没授权也让面板正常弹出，只是降级为按程序归类（面板内有橙色提示）。
         // 这里绝不能弹模态框——runModal 会阻塞主线程，把面板挡在后面。
         panelController.toggle()
+    }
+
+    /// ⇧⌘C：把当前这张便签的全文复制走，不用先全选
+    @objc func copyCurrentNote() {
+        panelController?.copyBodyToPasteboard()
     }
 
     @objc func showAllNotes() {

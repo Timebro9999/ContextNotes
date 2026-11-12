@@ -511,6 +511,11 @@ final class NotePanelController: NSObject, NSTextViewDelegate, NSWindowDelegate 
 
     // MARK: - 动作
 
+    /// 供菜单 ⇧⌘C 调用
+    func copyBodyToPasteboard() {
+        copyContent()
+    }
+
     @objc private func copyContent() {
         let body = textView.string
         guard !body.isEmpty else { return }
